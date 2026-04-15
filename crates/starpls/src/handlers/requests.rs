@@ -293,6 +293,10 @@ pub(crate) fn formatting(
     snapshot: &ServerSnapshot,
     params: lsp_types::DocumentFormattingParams,
 ) -> anyhow::Result<Option<Vec<lsp_types::TextEdit>>> {
+    if !snapshot.config.args.enable_formatting {
+        return Ok(None);
+    }
+
     let path = path_buf_from_url(&params.text_document.uri)?;
     let file_id = try_opt!(snapshot.document_manager.read().lookup_by_path_buf(&path));
     let line_index = try_opt!(snapshot.analysis_snapshot.line_index(file_id)?);
